@@ -1,3 +1,12 @@
+/*
+Script purpose: creating tables, 6 tables in total
+
+Use the following syntax to check the existing tables:
+
+IF OBJECT_ID ('schema.table_name', 'U') IS NOT NULL
+	DROP TABLE 'schema.table_name'
+*/
+
 CREATE TABLE silver.crm_cust_info (
 cst_id INT,
 cst_key NVARCHAR(50),
