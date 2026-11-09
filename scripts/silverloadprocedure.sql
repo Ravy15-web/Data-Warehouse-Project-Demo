@@ -62,7 +62,7 @@ BEGIN
 				cat_id,
 				prd_key,
 				prd_name,
-				prd_cst,
+				prd_cost,
 				prd_line,
 				prd_start_dt,
 				prd_end_dt
@@ -92,7 +92,7 @@ BEGIN
         TRUNCATE TABLE silver.crm_sales_details;
         PRINT '>> Inserting Data Into: silver.crm_sales_details';	
 				INSERT INTO silver.crm_sales_details (
-				sls_order_num,
+				sls_ord_num,
 				sls_prd_key,
 				sls_cust_id,
 				sls_order_dt,
@@ -111,11 +111,10 @@ BEGIN
 				END as sls_order_dt,
 				CASE WHEN sls_ship_dt = 0 OR LEN(sls_ship_dt) != 8 THEN NULL
 					ELSE CAST(CAST(sls_ship_dt AS VARCHAR) AS DATE)
-				END as sls_order_dt,
+				END as sls_ship_dt,
 				CASE WHEN sls_due_dt = 0 OR LEN(sls_due_dt) != 8 THEN NULL
 					ELSE CAST(CAST(sls_due_dt AS VARCHAR) AS DATE)
 				END as sls_due_dt,
-				sls_sales,
 				CASE WHEN sls_sales IS NULL OR sls_sales <= 0 OR sls_sales != sls_quantity * ABS(sls_price)
 					THEN sls_quantity * ABS(sls_price)
 				    ELSE sls_sales
