@@ -8,6 +8,9 @@ to produce a clean, enriched, and business-ready dataset.
 */
 
 --First view table
+IF OBJECT_ID('gold.dim_customers','V') IS NOT NULL
+	DROP VIEW gold.dim_customers;
+GO
 CREATE VIEW gold.dim_customers AS
 
 SELECT
@@ -30,6 +33,9 @@ LEFT JOIN silver.erp_cust_loc la
 ON ci.cst_key = la.customer_id
 
 --2nd view table
+IF OBJECT_ID('gold.dim_products','V') IS NOT NULL
+	DROP VIEW gold.dim_products;
+GO
 CREATE VIEW gold.dim_products AS
 
 SELECT
@@ -51,6 +57,8 @@ WHERE prd_end_dt IS NULL
 
 
 --3rd view table
+IF OBJECT_ID('gold.fact_sales','V') IS NOT NULL
+	DROP VIEW gold.fact_sales;
 CREATE VIEW gold.fact_sales AS
 
 SELECT
