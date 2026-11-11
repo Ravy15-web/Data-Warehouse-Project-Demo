@@ -85,3 +85,79 @@ LEFT JOIN gold.dim_customers cu
 ON fs.customer_key = cu.customer_key
 GROUP BY country
 ORDER BY items_sold DESC
+
+/* These are the sql queries for ranking exploration' */
+
+--Which 5 products generate the highest revenue?
+SELECT TOP 5
+fs.product_key,
+product_name,
+SUM(sales_amount) as total_revenue
+FROM gold.fact_sales fs
+LEFT JOIN gold.dim_products pr
+ON fs.product_key = pr.product_key
+GROUP BY fs.product_key, product_name
+ORDER BY total_revenue DESC
+
+--Using window function
+SELECT *
+FROM ( SELECT
+	pr.product_name,
+	SUM(sales_amount) as total_revenue,
+	RoW_NUMBER() OVER (ORDER BY SUM(sales_amount) DESC) as rank_sales
+	FROM gold.fact_sales fs
+	LEFT JOIN gold.dim_products pr
+	ON fs.product_key = pr.product_key
+	GROUP BY pr.product_name) t
+WHERE rank_sales <= 5
+
+
+--What are the 5 worst-performing products in terms of sales?
+SELECT TOP 5
+fs.product_key,
+product_name,
+SUM(sales_amount) as total_revenue
+FROM gold.fact_sales fs
+LEFT JOIN gold.dim_products pr
+ON fs.product_key = pr.product_key
+GROUP BY fs.product_key, product_name
+ORDER BY total_revenue
+
+--Find the Top-10 customers who have generated the highest revenue
+SELECT TOP 10
+cu.customer_id,
+cu.first_name,
+cu.last_name,
+SUM(fs.sales_amount) as total_revenue
+FROM gold.fact_sales fs
+LEFT JOIN gold.dim_customers cu
+ON fs.customer_key = cu.customer_key
+GROUP BY customer_id, first_name, last_name
+ORDER BY total_revenue DESC
+
+--Using window function
+SELECT *
+FROM
+	(SELECT
+	cu.customer_id,
+	cu.first_name,
+	cu.last_name,
+	SUM(fs.sales_amount) as total_revenue,
+	ROW_NUMBER() OVER (ORDER BY SUM(fs.sales_amount) DESC) as customer_rank
+	FROM gold.fact_sales fs
+	LEFT JOIN gold.dim_customers cu
+	ON fs.customer_key = cu.customer_key
+	GROUP BY customer_id, first_name, last_name)t
+WHERE customer_rank <= 10
+
+--and 3 customers with the fewest orders placed
+SELECT TOP 3
+cu.customer_key,
+cu.first_name,
+cu.last_name,
+COUNT(DISTINCT order_number) as total_orders
+FROM gold.fact_sales fs
+LEFT JOIN gold.dim_customers cu
+ON fs.customer_key = cu.customer_key
+GROUP BY cu.customer_key, cu.first_name, last_name
+ORDER BY total_orders
