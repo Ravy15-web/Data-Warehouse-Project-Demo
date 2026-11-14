@@ -52,7 +52,7 @@ customer_name,
 age,
 COUNT(DISTINCT order_number) as total_orders,
 SUM(sales_amount) as total_sales,
-COUNT(quantity) as total_quantity_purchased,
+SUM(quantity) as total_quantity_purchased,
 COUNT(DISTINCT product_key) as total_products,
 MAX(order_date) as last_order_date,
 DATEDIFF(month, MIN(order_date), MAX(order_date)) as lifespan
